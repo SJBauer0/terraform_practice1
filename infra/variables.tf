@@ -7,13 +7,13 @@ variable "region" {
 variable "cidr_vpc" {
   description = "The CIDR block for the VPC."
   type        = string
-  default     = "10.0.0.0/16"
+  default     = "10.123.0.0/16"
 }
 
 variable "aws_subnet_CIDR_block" {
   description = "The CIDR block for the subnet."
   type        = string
-  default     = "10.0.1.0/24"
+  default     = "10.123.1.0/24"
 }
 
 variable "ec2_instance_type" {

@@ -123,10 +123,29 @@ resource "aws_instance" "sjb-ec2" {
 
 # IAM Resources
 resource "aws_iam_instance_profile" "sjb_ssm_profile" {
-  name = "sjb-ssm-profile"
+  name = "sjb-ssm-profile-${formatdate("YYYY-MM-DD-hhmm", timestamp())}"
   role = aws_iam_role.sjb_ssm_role.name
 }
 
+# IAM Role for SSM to manage SJB instances
+resource "aws_iam_role" "sjb_ssm_role" {
+  name = "sjb-ssm-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+          Effect = "Allow"
+          Principal = {
+          Service = "ec2.amazonaws.com"
+
+        }
+        Action = "sts:AssumeRole"
+       }
+      # The * means this role can be assumed by any service.
+      # Resource = "*"
+    ]
+  })
+}
 
 // Output Blocks
 
