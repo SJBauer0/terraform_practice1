@@ -19,5 +19,5 @@ variable "admin-policy-name" {
 variable "policy_arn" {
   description = "ARN of the Admin Policy"
   type = string
-  default = "admin_policy_arn"
+  default = "arn:aws:iam::aws:policy/AdministratorAccess"
 }

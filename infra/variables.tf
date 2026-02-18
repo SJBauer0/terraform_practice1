@@ -19,6 +19,6 @@ variable "aws_subnet_CIDR_block" {
 variable "ec2_instance_type" {
   description = "The EC2 instance type."
   type        = string
-  default     = "t2.micro"
+  default     = "t3.micro"
 }
 

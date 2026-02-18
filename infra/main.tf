@@ -54,7 +54,7 @@ resource "aws_route" "internet-route" {
 
 resource "aws_route_table" "sjb-rt" {
   vpc_id = aws_vpc.sjb-vpc.id
-
+  
   tags = {
     Name = "sjb-rt"
   }
@@ -126,7 +126,6 @@ output "resource_ids" {
     sg_id        = aws_security_group.sjb-sg.id
     aws_instance = aws_instance.sjb-ec2.id
     s3_bucket_id = data.terraform_remote_state.bootstrap.outputs.s3_bucket_name
-    aws_user     = data.terraform_remote_state.bootstrap.outputs.username-mgmt.id
     route_table_id = aws_route_table.sjb-rt.id
     
   }
