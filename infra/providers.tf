@@ -1,3 +1,4 @@
+# Terraform configuration for AWS infrastructure
 terraform {
   backend "s3" {
     

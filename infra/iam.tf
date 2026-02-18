@@ -1,3 +1,5 @@
+
+# IAM Role for SSM to manage SJB instances
 resource "aws_iam_role" "sjb_ssm_role" {
   name = "sjb_ssm_role"
   assume_role_policy = jsonencode({

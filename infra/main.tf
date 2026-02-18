@@ -1,5 +1,6 @@
 // Data Blocks
 
+# Fetch the latest Amazon Linux 2 AMI
 data "aws_ami" "amazon_linux" {
   filter {
     name   = "name"
@@ -9,6 +10,7 @@ data "aws_ami" "amazon_linux" {
   owners      = ["amazon"]
 }
 
+# Fetch outputs from the bootstrap module
 data "terraform_remote_state" "bootstrap" {
   backend = "local" 
 
@@ -19,6 +21,7 @@ data "terraform_remote_state" "bootstrap" {
 
 // Resource Blocks
 
+# VPC and Networking Resources
 resource "aws_vpc" "sjb-vpc" {
   cidr_block = var.cidr_vpc
 
@@ -30,6 +33,7 @@ resource "aws_vpc" "sjb-vpc" {
   }
 }
 
+# Internet Gateway for the VPC
 resource "aws_internet_gateway" "sjb-igw" {
   vpc_id = aws_vpc.sjb-vpc.id
 
@@ -38,6 +42,7 @@ resource "aws_internet_gateway" "sjb-igw" {
   }
 }
 
+# Subnet for the EC2 instance
 resource "aws_subnet" "sjb-subnet" {
   cidr_block = var.aws_subnet_CIDR_block
   vpc_id     = aws_vpc.sjb-vpc.id
@@ -46,12 +51,14 @@ resource "aws_subnet" "sjb-subnet" {
   }
 }
 
+# Route for Internet Access
 resource "aws_route" "internet-route" {
   route_table_id         = aws_route_table.sjb-rt.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.sjb-igw.id
 }
 
+# Route Table for the Subnet
 resource "aws_route_table" "sjb-rt" {
   vpc_id = aws_vpc.sjb-vpc.id
   
@@ -60,6 +67,7 @@ resource "aws_route_table" "sjb-rt" {
   }
 }
 
+# Security Group for the EC2 instance
 resource "aws_security_group" "sjb-sg" {
   name        = "sjb-sg"
   description = "Security group for sjb-ec2 instance"
@@ -67,6 +75,7 @@ resource "aws_security_group" "sjb-sg" {
 
 }
 
+# Ingress rule for SSH access
 resource "aws_vpc_security_group_ingress_rule" "sjb-sg-ingress" {
   security_group_id = aws_security_group.sjb-sg.id
 
@@ -76,6 +85,7 @@ resource "aws_vpc_security_group_ingress_rule" "sjb-sg-ingress" {
   to_port     = 22
 }
 
+# Egress rule for outbound traffic
 resource "aws_vpc_security_group_egress_rule" "sjb-sg-egress" {
   security_group_id = aws_security_group.sjb-sg.id
 
@@ -86,12 +96,14 @@ resource "aws_vpc_security_group_egress_rule" "sjb-sg-egress" {
 
 }
 
+# Associate the subnet with the route table
 resource "aws_route_table_association" "sjb-rt-association" {
   subnet_id      = aws_subnet.sjb-subnet.id
   route_table_id = aws_route_table.sjb-rt.id
 
 }
 
+# EC2 Instance for SJB
 resource "aws_instance" "sjb-ec2" {
   ami                         = data.aws_ami.amazon_linux.id
   availability_zone           = aws_subnet.sjb-subnet.availability_zone
@@ -109,6 +121,7 @@ resource "aws_instance" "sjb-ec2" {
 
 }
 
+# IAM Resources
 resource "aws_iam_instance_profile" "sjb_ssm_profile" {
   name = "sjb-ssm-profile"
   role = aws_iam_role.sjb_ssm_role.name
